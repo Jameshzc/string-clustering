@@ -2,6 +2,7 @@
 #define JAROWINKLER_HPP
 
 #include <string>
+#include <vector>
 
 
 
