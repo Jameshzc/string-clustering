@@ -27,6 +27,10 @@ int main()
     test("MARTHA", "MARHTA");
     test("DWAYNE", "DUANE");
     test("DIXON", "DICKSONX");
+
+    test("CAT", "CAT");
+    test("dog", "DOG");
+    test("cat", "dog");
     
     return 0;
 }
