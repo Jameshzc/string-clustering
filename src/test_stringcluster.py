@@ -23,8 +23,8 @@ class TestStringDistance(unittest.TestCase):
   """
   This class tests the same example cases as given in the reference
   Jaro-Winkler implementation. While it is not exaustive, it is assumed that
-  the reference implementation is stable enough that a brief agreement check
-  between the two implementations is sufficient.
+  the reference implementation is stable enough that it is sufficient to simply
+  check that the two implementations agree on a few test cases.
 
   To better establish the correctness of the ported implementation, we could
   either link to the C++ implementation, or externally call on its executable.
