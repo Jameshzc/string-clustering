@@ -23,12 +23,14 @@ limitations under the License.
 import random
 import stringdist
 import collections
+from pprint import pprint
 
 class DistanceMatrix(object):
    """
    Stores the distances between elements in our set. This allows us to avoid
    unnecessary recomputation of the distance, and instead we can precompute
-   and store the result.
+   and store the result. To avoid floating point error, distances are rounded
+   to 6 decimal places.
 
    If necessary, this provides the API that would allow
    for the storage method to be swapped out (i.e. writing the distances to disk
@@ -57,7 +59,7 @@ class DistanceMatrix(object):
          for second in elems:
             # Check if reverse direction exists - if it does, don't store
             if self.distMap.get(second).get(first) is None:
-               self.distMap[first][second] = self.getDist(first, second)
+               self.distMap[first][second] = round(self.getDist(first, second), 6)
 
    def dist(self, elem_a, elem_b):
       """
@@ -113,6 +115,7 @@ class ClusterEngine(object):
       # We check similarity using a counter to do an order-insensitive equality.
       while collections.Counter(last_medoids) != \
             collections.Counter(current_medoids):
+         # print("Current medoids:\n{}".format(current_medoids))
          # Wipe the results, and re-seed based on the medoids
          self.result = []
          for m in current_medoids:
@@ -148,7 +151,11 @@ class ClusterEngine(object):
       each element e. The biggest result is the element that has the best
       similarity, and is chosen to be returned as the next medoid.
       """
+      # pprint(group)
+
       each_sum_dists = [sum((self.distMat.dist(m, e) for e in group)) for m in group]
+      # for m in group:
+         # print("m:{}\n\t{}".format(m, sum((self.distMat.dist(m, e) for e in group))))
       best_medoid = group[each_sum_dists.index(max(each_sum_dists))]
 
       return best_medoid
