@@ -54,7 +54,6 @@ class DistanceMatrix(object):
       self.distMap = {e:{} for e in elems}
       self.getDist = distanceFunc
 
-
       for first in elems:
          for second in elems:
             # Check if reverse direction exists - if it does, don't store
