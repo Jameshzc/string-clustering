@@ -1,27 +1,27 @@
 #!python3
 """
-	This file contains the functions used to calculate string distance. The same
-	API is exposed to make it easy to swap out which specific distance measure
-	is used. Currently only Jaro-Winkler distance is implemented, but other
-	algorithms worth considering include Hamming distance and Levenshtein
-	distance.
+This file contains the functions used to calculate string distance. The same
+API is exposed to make it easy to swap out which specific distance measure
+is used. Currently only Jaro-Winkler distance is implemented, but other
+algorithms worth considering include Hamming distance and Levenshtein
+distance.
 
-	Care must be taken, as not every distance measure can be interpreted in
-	the same way.
+Care must be taken, as not every distance measure can be interpreted in
+the same way.
 
-   Copyright 2017 Eric Yi-Hsun Huang (Kris Wallperington)
+Copyright 2017 Eric Yi-Hsun Huang (Kris Wallperington)
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 # Configurable weights and constants for Jaro and Jaro-Winkler
@@ -41,12 +41,12 @@ def jaroDistance(string_a, string_b):
 	a_len = len(string_a)
 	b_len = len(string_b)
 
-	if not a_len or not b_len:
+	if 0 == a_len or 0 == b_len:
 		# One of the strings is empty, must return no similarity
 		return 0.0
 
 	# Max length, as part of the definition of Jaro Distance
-	max_range = max(0, max(a_len, b_len) / 2 - 1)
+	max_range = max(0, max(a_len, b_len) // 2 - 1)
 
 	# Arrays that represent whether or not the character
 	# at the specified index is a match
@@ -57,7 +57,7 @@ def jaroDistance(string_a, string_b):
 	for a_idx in range(a_len):
 		# Represents the sliding window we use to determine matches
 		min_idx = max(a_idx - max_range, 0)
-		max_idx = min(a_idx + max_range, b_len)
+		max_idx = min(a_idx + max_range + 1, b_len)
 
 		if min_idx >= max_idx:
 			# Means we ran past the end of string b - nothing left to compare
@@ -71,7 +71,7 @@ def jaroDistance(string_a, string_b):
 				char_matches += 1
 				break	
 
-	if not char_matches:
+	if 0 == char_matches:
 		# If no characters match, then we must return 0.
 		return 0.0
 
@@ -79,7 +79,7 @@ def jaroDistance(string_a, string_b):
 	b_pos = [0] * char_matches
 
 	pos_idx = 0
-	for a_idx in range(0, a_len):
+	for a_idx in range(a_len):
 		if a_match[a_idx]:
 			a_pos[pos_idx] = a_idx
 			pos_idx += 1

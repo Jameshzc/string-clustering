@@ -28,9 +28,7 @@ int main()
     test("DWAYNE", "DUANE");
     test("DIXON", "DICKSONX");
 
-    test("CAT", "CAT");
-    test("dog", "DOG");
-    test("cat", "dog");
+    test("potato", "salad");
     
     return 0;
 }
