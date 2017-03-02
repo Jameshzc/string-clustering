@@ -96,11 +96,9 @@ def jaroDistance(string_a, string_b):
         if string_a[a_pos[i]] != string_b[b_pos[i]]:
             transpositions += 1
 
-    return \
-        JARO_WEIGHT_STRING_A * char_matches / a_len + \
-        JARO_WEIGHT_STRING_B * char_matches / b_len + \
-        JARO_WEIGHT_TRANSPOSITIONS * (char_matches - transpositions // 2) \
-        / char_matches
+    return  JARO_WEIGHT_STRING_A * char_matches / a_len + \
+            JARO_WEIGHT_STRING_B * char_matches / b_len + \
+            JARO_WEIGHT_TRANSPOSITIONS * (char_matches - transpositions // 2) / char_matches
 
 
 def jaroWinklerDistance(string_a, string_b):

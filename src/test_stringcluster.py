@@ -42,54 +42,43 @@ class TestStringDistance(unittest.TestCase):
 
     # C++ Reference implementation example cases
     def test_martha(self):
-        self.assertAlmostEqual(
-            stringdist.jaroDistance("MARTHA", "MARHTA"), 0.944444, places=6)
-        self.assertAlmostEqual(
-            stringdist.jaroWinklerDistance(
-                "MARTHA", "MARHTA"), 0.961111, places=6)
+        self.assertAlmostEqual(stringdist.jaroDistance("MARTHA", "MARHTA"), 0.944444, places=6)
+        self.assertAlmostEqual(stringdist.jaroWinklerDistance("MARTHA", "MARHTA"), 0.961111, places=6)
 
     def test_dwayne(self):
-        self.assertAlmostEqual(
-            stringdist.jaroDistance("DWAYNE", "DUANE"), 0.822222, places=6)
-        self.assertAlmostEqual(
-            stringdist.jaroWinklerDistance("DWAYNE", "DUANE"), 0.84, places=6)
+        self.assertAlmostEqual(stringdist.jaroDistance("DWAYNE", "DUANE"), 0.822222, places=6)
+        self.assertAlmostEqual(stringdist.jaroWinklerDistance("DWAYNE", "DUANE"), 0.84, places=6)
 
     def test_dixon(self):
-        self.assertAlmostEqual(
-            stringdist.jaroDistance("DIXON", "DICKSONX"), 0.766667, places=6)
-        self.assertAlmostEqual(
-            stringdist.jaroWinklerDistance(
-                "DIXON", "DICKSONX"), 0.813333, places=6)
+        self.assertAlmostEqual(stringdist.jaroDistance("DIXON", "DICKSONX"), 0.766667, places=6)
+        self.assertAlmostEqual(stringdist.jaroWinklerDistance("DIXON", "DICKSONX"), 0.813333, places=6)
 
     def test_cat(self):
-        self.assertAlmostEqual(
-            stringdist.jaroDistance("cat", "cat"), 1, places=6)
-        self.assertAlmostEqual(
-            stringdist.jaroWinklerDistance("cat", "cat"), 1, places=6)
+        self.assertAlmostEqual(stringdist.jaroDistance("cat", "cat"), 1, places=6)
+        self.assertAlmostEqual(stringdist.jaroWinklerDistance("cat", "cat"), 1, places=6)
 
 
 class TestDistanceMatrix(unittest.TestCase):
+    """
+    This class tests functions related to the DistanceMatrix class, to ensure
+    that the two-way access layer that is implemented is working correctly.
+    """
 
     def setUp(self):
         self.simple_data = ["cat", "dog", "man", "worker", "potato", "salad"]
-        self.simpleMat = clusterengine.DistanceMatrix(
-            self.simple_data,
-            stringdist.jaroWinklerDistance
-        )
+        self.simpleMat = clusterengine.DistanceMatrix(self.simple_data, stringdist.jaroWinklerDistance)
 
     def test_dist_matrix_simple_symmetry(self):
         for first in self.simple_data:
             for second in self.simple_data:
                 with self.subTest(first=first, second=second):
                     # Check symmetry
-                    self.assertEqual(
-                        self.simpleMat.dist(first, second),
-                        self.simpleMat.dist(second, first)
-                    )
+                    self.assertEqual(self.simpleMat.dist(first, second), self.simpleMat.dist(second, first))
                     # Check against true value
-                    self.assertEqual(
+                    self.assertAlmostEqual(
                         stringdist.jaroWinklerDistance(first, second),
-                        self.simpleMat.dist(first, second)
+                        self.simpleMat.dist(first, second),
+                        places=6
                     )
 
     def test_dist_matrix_no_exist(self):
@@ -97,8 +86,7 @@ class TestDistanceMatrix(unittest.TestCase):
         self.assertEqual(self.simpleMat.dist("cat", "rabbit"), -1)
 
     def test_dist_matrix_empty(self):
-        empty_mat = clusterengine.DistanceMatrix(
-            [], stringdist.jaroWinklerDistance)
+        empty_mat = clusterengine.DistanceMatrix([], stringdist.jaroWinklerDistance)
         self.assertEqual(empty_mat.dist("Non existent", "Pair"), -1)
 
 if __name__ == '__main__':

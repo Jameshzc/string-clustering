@@ -23,7 +23,7 @@ limitations under the License.
 import random
 import stringdist
 import collections
-from pprint import pprint
+import itertools
 
 
 class DistanceMatrix(object):
@@ -117,9 +117,7 @@ class ClusterEngine(object):
 
         # We check similarity using a counter to do an order-insensitive
         # equality.
-        while collections.Counter(last_medoids) != \
-                collections.Counter(current_medoids):
-            # print("Current medoids:\n{}".format(current_medoids))
+        while collections.Counter(last_medoids) != collections.Counter(current_medoids):
             # Wipe the results, and re-seed based on the medoids
             self.result = []
             for m in current_medoids:
@@ -135,14 +133,12 @@ class ClusterEngine(object):
                     # we wanted.
 
                     # This computes the distance from each medoid to e
-                    e_dists = [self.distMat.dist(m, e)
-                               for m in current_medoids]
+                    e_dists = [self.distMat.dist(m, e) for m in current_medoids]
                     closest_group_idx = e_dists.index(max(e_dists))
                     self.result[closest_group_idx].append(e)
 
             last_medoids = current_medoids[:]
-            current_medoids = [self.findNewMedoid(
-                group) for group in self.result]
+            current_medoids = [self.findNewMedoid(group) for group in self.result]
 
         # When we fall through, self.result is clustered with the locally
         # optimal groupings, and we return ourselves to allow function
@@ -158,25 +154,28 @@ class ClusterEngine(object):
         each element e. The biggest result is the element that has the best
         similarity, and is chosen to be returned as the next medoid.
         """
-        # pprint(group)
 
-        each_sum_dists = [sum((self.distMat.dist(m, e)
-                               for e in group)) for m in group]
-        # for m in group:
-        # print("m:{}\n\t{}".format(m, sum((self.distMat.dist(m, e) for e in group))))
+        each_sum_dists = [sum((self.distMat.dist(m, e) for e in group)) for m in group]
         best_medoid = group[each_sum_dists.index(max(each_sum_dists))]
 
         return best_medoid
 
     def asCSV(self):
         if not self.result:
-            raise InvalidStateError(
-                "This cannot be called before the result is materialized!")
+            raise InvalidStateError("This cannot be called before the result is materialized!")
+
+        # Write header information
+        output = ",".join(("Group {}".format(i) for i in range(self.k))) + "\n"
+
+        # Write rows
+        for row in itertools.zip_longest(*self.result, fillvalue=""):
+            output += ",".join(row) + "\n"
+
+        return output
 
     def asText(self):
         if not self.result:
-            raise InvalidStateError(
-                "This cannot be called before the result is materialized!")
+            raise InvalidStateError("This cannot be called before the result is materialized!")
 
         output = ""
         for i, group in enumerate(self.result):
