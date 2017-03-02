@@ -24,42 +24,43 @@ import sys
 
 import clusterengine
 
+
 def main():
-  parser = ap.ArgumentParser(
-    description="Given k clusters and a set of strings (one per line), \
-                 returns the strings grouped according to a chosen distance \
-                 measure. The resulting output will be given back to stdout."
-  )
-  parser.add_argument("k", type=int, 
-                     help="Specifies the number of desired groups."
-  )
-  parser.add_argument("infile",
-       nargs="+",
-       default=sys.stdin, 
-       help="Specify the file(s) to be read. Will read stdin by default, \
-            or if given '-'."
-  )
-  parser.add_argument("-o", "--output-format",
-       type=str.lower,
-       choices=["csv", "text"],
-       default="text",
-       help="Specify the output format. Defaults to simple text format."
-  )
-  args = parser.parse_args()
+    parser = ap.ArgumentParser(
+        description="Given k clusters and a set of strings (one per line), \
+                returns the strings grouped according to a chosen distance \
+                measure. The resulting output will be given back to stdout.")
+    parser.add_argument("k", type=int,
+                        help="Specifies the number of desired groups.")
+    parser.add_argument("infile",
+                        nargs="+",
+                        default=sys.stdin,
+                        help="Specify the file(s) to be read. Will read stdin \
+                            by default, or if given '-'.")
+    parser.add_argument(
+        "-o",
+        "--output-format",
+        type=str.lower,
+        choices=[
+            "csv",
+            "text"],
+        default="text",
+        help="Specify the output format. Defaults to simple text format.")
+    args = parser.parse_args()
 
-  data = []
-  with fileinput.input(files=args.infile) as f:
-    for line in f:
-      line = line.strip()
-      if line:
-        data.append(line)
+    data = []
+    with fileinput.input(files=args.infile) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                data.append(line)
 
-  ceng = clusterengine.ClusterEngine(args.k, data).cluster()
+    ceng = clusterengine.ClusterEngine(args.k, data).cluster()
 
-  if "csv" in args.output_format:
-    print(ceng.asCSV())
-  elif "text" in args.output_format:
-    print(ceng.asText())
+    if "csv" in args.output_format:
+        print(ceng.asCSV())
+    elif "text" in args.output_format:
+        print(ceng.asText())
 
 if __name__ == "__main__":
-   main()
+    main()
